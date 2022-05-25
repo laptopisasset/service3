@@ -12,9 +12,9 @@ RUN go build -ldflags="-X main.bundle=${BUILD_REF}"
 FROM alpine
 ARG BUILD_DATE
 ARG BUILD_REF
-COPY --from=build_sales-api /service /service/service
+COPY --from=build_sales-api /service /service
 WORKDIR /service
-CMD ["./service"]
+CMD ["./service3"]
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \
     org.opencontainers.image.title="sales-api" \

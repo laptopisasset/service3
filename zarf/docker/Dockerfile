@@ -6,14 +6,14 @@ ARG BUILD_REF
 COPY . /service
 
 WORKDIR /service
-RUN go build -ldflags="-X main.bundle=${BUILD_REF}"
+RUN go build -ldflags="-X main.build=${BUILD_REF}"
 
 
 FROM alpine
 ARG BUILD_DATE
 ARG BUILD_REF
-COPY --from=build_sales-api /service /service
 WORKDIR /service
+COPY --from=build_sales-api /service/service3 .
 CMD ["./service3"]
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \

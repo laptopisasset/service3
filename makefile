@@ -43,16 +43,17 @@ kind-up:
 		--image kindest/node:v1.24.0@sha256:f68036a8c810306223c947fe047b873eef7f8b7a795f525d0b63fe62e263f78c \
 		--name $(KIND_CLUSTER) \
 		--config zarf/k8s/kind/kind-config.yaml
-	kubectl config set-context --current --namespace=service-system
+	kubectl config set-context --current --namespace=sales-system
 
 kind-down:
 	kind delete cluster --name $(KIND_CLUSTER)
 
 kind-load:
-	kind load docker-image service-arm64:$(VERSION) --name $(KIND_CLUSTER)
+	cd zarf/k8s/kind/sales-pod; kustomize edit set image sales-api-image=sales-api-arm64:$(VERSION)
+	kind load docker-image sales-api-arm64:$(VERSION) --name $(KIND_CLUSTER)
 
 kind-apply:
-	kustomize build zarf/k8s/kind/service-pod | kubectl apply -f -
+	kustomize build zarf/k8s/kind/sales-pod | kubectl apply -f -
 
 kind-status:
 	kubectl get nodes -o wide
@@ -60,12 +61,12 @@ kind-status:
 	kubectl get pods -o wide --watch --all-namespaces
 
 kind-logs:
-	kubectl logs -l app=service --all-containers=true -f --tail=100
+	kubectl logs -l app=sales --all-containers=true -f --tail=100
 
 kind-restart:
-	kubectl rollout restart deployment service-pod
+	kubectl rollout restart deployment sales-pod
 
-kind-status-service:
+kind-status-sales:
 	kubectl get pods -o wide --watch
 
 kind-update: all kind-load kind-restart
@@ -73,4 +74,4 @@ kind-update: all kind-load kind-restart
 kind-update-apply: all kind-load kind-apply
 
 kind-describe:
-	kubectl describe pod -l app=service
+	kubectl describe pod -l app=sales

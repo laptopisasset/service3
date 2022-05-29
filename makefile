@@ -1,7 +1,14 @@
 SHELL := /bin/bash
 
+# =========================================================================
+# Testing running service
+
+# expvarmon -ports=":4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.Alloc"
+
+# ========================================================================
+
 run:
-	go run main.go
+	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
 
 
 # ==============================================================================
@@ -32,7 +39,7 @@ sales-api:
 # ==============================================================================
 # Running from within k8s/kind
 
-KIND_CLUSTER := service-cluster
+KIND_CLUSTER := sales-cluster
 
 # Upgrade to latest Kind: brew upgrade kind
 # For full Kind v0.13 release notes: https://github.com/kubernetes-sigs/kind/releases/tag/v0.13.0
@@ -61,7 +68,7 @@ kind-status:
 	kubectl get pods -o wide --watch --all-namespaces
 
 kind-logs:
-	kubectl logs -l app=sales --all-containers=true -f --tail=100
+	kubectl logs -l app=sales --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
 
 kind-restart:
 	kubectl rollout restart deployment sales-pod

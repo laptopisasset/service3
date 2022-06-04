@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 
+	"github.com/laptopisasset/service3/business/sys/validate"
 	"github.com/laptopisasset/service3/foundation/web"
 	"go.uber.org/zap"
 )
@@ -19,7 +20,7 @@ type Handlers struct {
 func (h Handlers) Test(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 
 	if n := rand.Intn(100); n%2 == 0 {
-		return errors.New("untrusted error")
+		return validate.NewRequestError(errors.New("trusted error"), http.StatusBadRequest)
 	}
 
 	status := struct {

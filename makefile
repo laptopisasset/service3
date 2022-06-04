@@ -4,6 +4,7 @@ SHELL := /bin/bash
 # Testing running service
 
 # expvarmon -ports=":4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.Alloc"
+# hey -m GET -c 100 -n 1000 http://localhost:3000/v1/test
 
 # ========================================================================
 
